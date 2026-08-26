@@ -1,114 +1,160 @@
-# ShopFlux — Application E-Commerce Flutter avec Riverpod
+# Flutter E-Commerce Application with Riverpod
 
-Application mobile e-commerce moderne et réactive développée avec **Flutter** et **Riverpod** comme solution de gestion d'état centralisée.
-
----
-
-## 🌟 Fonctionnalités Principales
-
-1. **Catalogue de Produits (Liste & Détail)** :
-   - Affichage en grille adaptative avec badges de réduction, notes étoiles et statut de stock.
-   - Page de détail complète avec galerie d'images interactive, sélection de variantes (couleur, taille), sélecteur de quantité et fiche technique.
-   - Animations Hero fluides entre la liste et le détail.
-
-2. **Panier d'Achat Réactif** :
-   - Ajout au panier avec gestion automatique des quantités et variantes.
-   - Modification de la quantité (+ / -), suppression unitaire ou par glissement (*Swipe-to-Dismiss*).
-   - Calcul automatique du sous-total, de la TVA (20%), et de la livraison offerte dès 100 €.
-   - Système de code promo instantané (`RIVERPOD20` pour -20%, `WELCOME10` pour -10 €).
-   - Processus de commande avec confirmation animée et mise à jour de l'historique utilisateur.
-
-3. **Système de Favoris Persistant** :
-   - Ajout et retrait instantané en un clic.
-   - **Persistance locale sur le terminal** via `SharedPreferences`.
-   - Bouton d'action rapide *Tout ajouter au panier*.
-
-4. **Filtrage et Tri Avancés** :
-   - Recherche en temps réel (titre, catégorie, description).
-   - Sélecteur de catégories par filtres horizontaux.
-   - Feuille de filtres modale (*Bottom Sheet*) : tri par prix, popularité, note, ordre alphabétique, slider de fourchette de prix, filtres *En stock* et *En promotion*.
-
-5. **Écran Profil & Outils Développeur** :
-   - Informations utilisateur, solde du portefeuille et points de fidélité.
-   - Historique complet des commandes avec statuts interactifs.
-   - **Bascule Thème Sombre / Thème Clair** en temps réel.
-   - **Simulateur d'erreur serveur** pour tester le comportement de `AsyncValue.error` et le bouton de rechargement (*Retry*).
-
-6. **Bonus & Animations** :
-   - Animation de rebond (*bounce/pulse*) sur le badge du panier lors de l'ajout de produit.
-   - Snackbars animés contextuels.
+A high-performance, modular, and reactive Flutter e-commerce application developed using **Riverpod** as the state management solution.
 
 ---
 
-## 🏗️ Architecture & Gestion d'État avec Riverpod
+## 📋 Project Overview & Features
 
-L'application suit une architecture propre en 4 couches distinctes (*Clean Layered Architecture*) :
+This project implements all required and bonus features specified in the requirements:
+
+1. **Product Catalog (List + Detail Views)**:
+   - Responsive product grid with discount badges, star ratings, review counters, and real-time stock indicators.
+   - Dedicated Product Detail screen with interactive image gallery, color/size variant selection, quantity steppers, and specifications.
+   - Smooth `Hero` animations transitioning between the catalog and product detail pages.
+
+2. **Shopping Cart (Add, Remove, Quantity)**:
+   - Add items with variant selection (color, size) and custom quantity.
+   - Update quantity (`+` / `-`), remove individual items, or swipe-to-dismiss items.
+   - Dynamic real-time calculation of subtotal, VAT (20%), free shipping threshold (> 100 €), and promo code discounts (`RIVERPOD20` for -20%, `WELCOME10` for -10 €).
+   - Checkout flow with animated confirmation modal and order history recording.
+
+3. **Favorites System with Local Persistence**:
+   - One-tap toggle for favoriting products across cards and detail screens.
+   - **Local persistence on device** using `SharedPreferences` (data survives app restarts).
+   - Instant "Add all favorites to cart" shortcut.
+
+4. **Product Filtering and Sorting**:
+   - Real-time instant search bar matching title, category, and description.
+   - Horizontal category filter chips.
+   - Modal Filter Bottom Sheet offering:
+     - Sorting: Popular/Featured, Price Low-to-High, Price High-to-Low, Highest Rated, Alphabetical (A-Z).
+     - Price range slider ($0 - $1000).
+     - "In Stock only" and "On Sale only" toggles.
+
+5. **User Profile Screen (Mock)**:
+   - Complete user account details, wallet balance, and loyalty points.
+   - Interactive order history tracking past purchases and statuses.
+   - Dark Mode / Light Mode real-time theme switcher.
+   - Developer server-error simulator to test `AsyncValue.error` and UI retry mechanism.
+
+6. **Bonus (Cart Add Animations)**:
+   - Animated scale bounce badge (`AnimatedCartBadge`) on cart additions.
+   - Contextual floating Snackbars confirming cart actions.
+
+---
+
+## 🏗️ Architecture & Layered Structure
+
+The project strictly separates business logic from widgets following Clean Layered Architecture:
 
 ```
 lib/
-├── main.dart                          # Point d'entrée & ProviderScope avec overrides SharedPreferences
-└── src/
-    ├── models/                        # Modèles de données immuables
-    │   ├── product.dart               # Modèle Produit
-    │   ├── cart_item.dart             # Article du panier
-    │   ├── filter_state.dart          # État des filtres et options de tri
-    │   └── user_profile.dart          # Profil utilisateur et commandes
-    ├── data/                          # Couche données & persistance
-    │   ├── mock_products.dart         # Données simulées riches
-    │   ├── favorites_storage.dart     # Persistance locale (SharedPreferences)
-    │   └── product_repository.dart    # Repository de données asynchrones
-    ├── providers/                     # Providers Riverpod
-    │   └── providers.dart             # Providers (FutureProvider, StateNotifierProvider, etc.)
-    └── presentation/                  # Couche interface utilisateur (UI)
-        ├── theme/app_theme.dart       # Thèmes Material 3 (Clair / Sombre)
-        ├── widgets/                   # Composants UI réutilisables
-        └── screens/                   # Écrans principaux de l'application
+├── main.dart                          # App entry point, ProviderScope initialization & SharedPreferences override
+├── models/                            # Immutable Domain Data Models
+│   ├── product.dart                   # Product model (with JSON serialization, copyWith, equality)
+│   ├── cart_item.dart                 # CartItem model with quantity, variants and price calculations
+│   ├── filter_state.dart              # FilterState and ProductSortOption enum
+│   └── user_profile.dart              # UserProfile and OrderSummary models
+├── repositories/                      # Data Access & Repository Layer
+│   ├── product_repository.dart        # IProductRepository and MockProductRepository (JSON/Async)
+│   └── mock_products.dart             # Rich curated catalog mock dataset
+├── services/                          # Device Services & Persistence
+│   └── favorites_storage.dart         # SharedPreferences local storage wrapper for favorites
+├── providers/                         # Riverpod State Management Providers
+│   ├── product_provider.dart          # Product catalog & category providers
+│   ├── cart_provider.dart             # Shopping cart StateNotifier & summary providers
+│   ├── favorites_provider.dart        # Favorites StateNotifier & persistent storage provider
+│   ├── filter_provider.dart           # Filter & sorting StateNotifier & derived filtered products
+│   ├── theme_provider.dart            # ThemeMode StateNotifier provider (Dark/Light mode)
+│   ├── user_provider.dart             # User profile and order history StateNotifier provider
+│   └── providers.dart                 # Unified barrel export of all providers and notifiers
+├── screens/                           # Presentation Layer - UI Screens
+│   ├── home_catalog_screen.dart       # Main product catalog with search and category filters
+│   ├── product_detail_screen.dart     # Product detail screen with gallery and variant selector
+│   ├── cart_screen.dart               # Shopping cart screen with promo codes & checkout
+│   ├── favorites_screen.dart          # Wishlist / Favorites screen
+│   ├── profile_screen.dart            # User profile and developer tools screen
+│   └── main_navigation_screen.dart    # Bottom Navigation bar shell with badge counts
+├── widgets/                           # Reusable UI Components
+│   ├── async_value_widget.dart        # Generic widget handling AsyncValue (Loading, Error, Data)
+│   ├── product_card.dart              # Product card widget with discount and favorite buttons
+│   ├── filter_bottom_sheet.dart       # Filter and sorting modal bottom sheet
+│   └── animated_cart_badge.dart       # Animated bouncing cart badge widget
+└── theme/                             # Theming Layer
+    └── app_theme.dart                 # Material 3 Light & Dark themes
 ```
-
-### Providers Riverpod Déployés :
-
-1. `productsFutureProvider` : `FutureProvider` pour la récupération asynchrone des produits.
-2. `categoriesProvider` : `FutureProvider` pour l'extraction dynamique des catégories.
-3. `filterNotifierProvider` : `StateNotifierProvider` gérant les critères de filtre, recherche et tri.
-4. `filteredProductsProvider` : `Provider` dérivé appliquant les filtres et le tri de manière réactive sur les `AsyncValue<List<Product>>`.
-5. `favoritesNotifierProvider` : `StateNotifierProvider` gérant les IDs favoris avec écriture automatique dans `SharedPreferences`.
-6. `favoriteProductsProvider` : `Provider` dérivé reliant le catalogue et les favoris.
-7. `cartNotifierProvider` : `StateNotifierProvider` gérant la collection d'articles du panier.
-8. `cartSummaryProvider` : `Provider` calculant les totaux, taxes, remises et frais de port.
-9. `themeModeProvider` : `StateNotifierProvider` pour le basculement dynamique du thème.
-10. `userProfileProvider` : `StateNotifierProvider` pour les données du compte et les commandes.
-11. `simulateErrorProvider` : `StateProvider` pour simuler des erreurs réseau et valider la résilience de l'UI.
 
 ---
 
-## 🚀 Installation & Exécution
+## ⚙️ Riverpod State Management & Providers Breakdown
 
-1. **Cloner ou ouvrir le dossier du projet** :
+The application exclusively uses **Riverpod** for state management, deploying **12 distinct providers**:
+
+| Provider Name | Riverpod Type | State Managed | Description |
+| :--- | :--- | :--- | :--- |
+| `productsFutureProvider` / `productsProvider` | `FutureProvider.autoDispose<List<Product>>` | `AsyncValue<List<Product>>` | Asynchronously fetches products with latency and error simulation support. |
+| `productDetailProvider` | `FutureProvider.family.autoDispose<Product?, String>` | `AsyncValue<Product?>` | Family provider retrieving a specific product by its ID. |
+| `categoriesProvider` | `FutureProvider.autoDispose<List<String>>` | `AsyncValue<List<String>>` | Extracts all distinct product categories dynamically. |
+| `cartNotifierProvider` / `cartProvider` | `StateNotifierProvider<CartNotifier, List<CartItem>>` | `List<CartItem>` | Manages cart state: adding, updating quantities, incrementing, decrementing, and removing items. |
+| `cartSummaryProvider` / `cartTotalProvider` | `Provider<CartSummary>` | `CartSummary` | Computes subtotal, 20% VAT, free shipping rules, promo discounts, and grand total. |
+| `favoritesNotifierProvider` / `favoritesProvider` | `StateNotifierProvider<FavoritesNotifier, Set<String>>` | `Set<String>` | Manages favorited product IDs and automatically persists changes to `SharedPreferences`. |
+| `favoriteProductsProvider` | `Provider.autoDispose<AsyncValue<List<Product>>>` | `AsyncValue<List<Product>>` | Derived provider mapping active favorite IDs to full `Product` objects. |
+| `filterNotifierProvider` / `filterProvider` | `StateNotifierProvider<FilterNotifier, FilterState>` | `FilterState` | Manages query string, selected category, price range, stock flags, and sorting criteria. |
+| `filteredProductsProvider` | `Provider.autoDispose<AsyncValue<List<Product>>>` | `AsyncValue<List<Product>>` | Derived provider reactively filtering and sorting products based on `FilterState`. |
+| `themeModeProvider` / `themeProvider` | `StateNotifierProvider<ThemeModeNotifier, ThemeMode>` | `ThemeMode` | Controls dynamic Light Mode / Dark Mode switching across the app. |
+| `userProfileProvider` / `userProvider` | `StateNotifierProvider<UserProfileNotifier, UserProfile>` | `UserProfile` | Manages user profile information, loyalty points, and purchase history. |
+| `simulateErrorProvider` | `StateProvider<bool>` | `bool` | Toggles simulated network failure to demonstrate UI error handling and retry mechanisms. |
+
+---
+
+## 🛡️ Handling Loading & Error States with `AsyncValue`
+
+All asynchronous data operations are managed using Riverpod's `AsyncValue`:
+
+- **Loading State**: Displays customizable loading indicators (`CircularProgressIndicator` / `LinearProgressIndicator`).
+- **Error State**: Displays friendly error messages with an interactive **"Réessayer" (Retry)** button that invalidates the provider (`ref.invalidate(productsFutureProvider)`).
+- **Data State**: Renders content dynamically with support for empty list states and pull-to-refresh.
+
+---
+
+## 🧪 Automated Unit & Widget Tests
+
+Comprehensive test coverage is provided with **100% passing tests**:
+
+```bash
+flutter test
+```
+
+### Test Suites:
+- `test/models_test.dart`: Validates JSON serialization, `copyWith`, getters, and value equality on models.
+- `test/cart_test.dart`: Validates cart operations (add, remove, quantity update, totals, discounts).
+- `test/favorites_test.dart`: Validates favorite toggling and `SharedPreferences` disk persistence.
+- `test/filter_test.dart`: Validates multi-criteria search, category filtering, and sorting.
+- `test/widget_test.dart`: Validates UI rendering, `AsyncValueWidget` states, and navigation.
+
+---
+
+## 🚀 How to Run the App
+
+1. **Clone the repository**:
    ```bash
-   cd /home/sharone/ecommerce_riverpod
+   git clone https://github.com/shar0ne/e-commerce-exercice.git
+   cd e-commerce-exercice
    ```
 
-2. **Récupérer les dépendances** :
+2. **Install dependencies**:
    ```bash
    flutter pub get
    ```
 
-3. **Lancer l'analyse statique et les tests unitaires / widgets** :
+3. **Run tests**:
    ```bash
    flutter test
    flutter analyze
    ```
 
-4. **Lancer l'application** :
+4. **Launch the application**:
    ```bash
    flutter run
    ```
-
----
-
-## 🧪 Tests Unitaires et Widgets
-
-Des tests complets sont fournis dans [`test/widget_test.dart`](file:///home/sharone/ecommerce_riverpod/test/widget_test.dart) pour valider :
-- L'ajout d'articles, la mise à jour des quantités, l'application de code promo et le calcul du panier.
-- Le fonctionnement des filtres et du tri.
-- Le rendu complet des composants et de la barre de navigation.
