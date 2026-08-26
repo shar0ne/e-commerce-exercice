@@ -43,7 +43,20 @@ class ProfileScreen extends ConsumerWidget {
                 children: [
                   CircleAvatar(
                     radius: 36,
-                    backgroundImage: NetworkImage(user.avatarUrl),
+                    backgroundColor: theme.colorScheme.primary.withAlpha(40),
+                    child: ClipOval(
+                      child: Image.network(
+                        user.avatarUrl,
+                        width: 72,
+                        height: 72,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Icon(
+                          Icons.person_rounded,
+                          size: 38,
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                    ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(

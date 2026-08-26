@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:flutter/services.dart';
 import '../models/product.dart';
 import 'mock_products.dart';
 
@@ -5,28 +7,43 @@ abstract class IProductRepository {
   Future<List<Product>> getProducts({bool simulateError = false});
   Future<Product?> getProductById(String id);
   Future<List<String>> getCategories();
+  Future<List<Product>> searchProducts(String query);
 }
 
+typedef ProductRepository = IProductRepository;
+
 class MockProductRepository implements IProductRepository {
-  final List<Product> _products = List.from(mockProductsData);
+  List<Product>? _cachedProducts;
 
   @override
   Future<List<Product>> getProducts({bool simulateError = false}) async {
-    // Simulate network latency for realistic AsyncValue demo
-    await Future.delayed(const Duration(milliseconds: 700));
+    // Artificial latency for AsyncValue demo
+    await Future.delayed(const Duration(milliseconds: 600));
 
     if (simulateError) {
-      throw Exception('Échec de connexion au serveur (Erreur 500 simulée). Veuillez réessayer.');
+      throw Exception('Erreur de connexion au serveur (500). Veuillez réessayer.');
     }
 
-    return List.unmodifiable(_products);
+    if (_cachedProducts != null && _cachedProducts!.isNotEmpty) {
+      return List.unmodifiable(_cachedProducts!);
+    }
+
+    try {
+      final jsonString = await rootBundle.loadString('assets/products.json');
+      final List<dynamic> list = jsonDecode(jsonString);
+      _cachedProducts = list.map((item) => Product.fromMap(item as Map<String, dynamic>)).toList();
+    } catch (_) {
+      _cachedProducts = List.from(mockProductsData);
+    }
+
+    return List.unmodifiable(_cachedProducts!);
   }
 
   @override
   Future<Product?> getProductById(String id) async {
-    await Future.delayed(const Duration(milliseconds: 300));
+    final products = await getProducts();
     try {
-      return _products.firstWhere((p) => p.id == id);
+      return products.firstWhere((p) => p.id == id);
     } catch (_) {
       return null;
     }
@@ -34,9 +51,21 @@ class MockProductRepository implements IProductRepository {
 
   @override
   Future<List<String>> getCategories() async {
-    await Future.delayed(const Duration(milliseconds: 200));
-    final categories = _products.map((p) => p.category).toSet().toList();
+    final products = await getProducts();
+    final categories = products.map((p) => p.category).toSet().toList();
     categories.sort();
     return ['Tous', ...categories];
+  }
+
+  @override
+  Future<List<Product>> searchProducts(String query) async {
+    final products = await getProducts();
+    if (query.isEmpty) return products;
+    final q = query.toLowerCase();
+    return products.where((p) {
+      return p.title.toLowerCase().contains(q) ||
+          p.category.toLowerCase().contains(q) ||
+          p.description.toLowerCase().contains(q);
+    }).toList();
   }
 }

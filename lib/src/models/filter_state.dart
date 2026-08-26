@@ -9,6 +9,8 @@ enum ProductSortOption {
   const ProductSortOption(this.label);
 }
 
+typedef SortOption = ProductSortOption;
+
 class FilterState {
   final String searchQuery;
   final String selectedCategory;
@@ -60,4 +62,28 @@ class FilterState {
   FilterState reset() {
     return const FilterState();
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is FilterState &&
+          runtimeType == other.runtimeType &&
+          searchQuery == other.searchQuery &&
+          selectedCategory == other.selectedCategory &&
+          sortOption == other.sortOption &&
+          minPrice == other.minPrice &&
+          maxPrice == other.maxPrice &&
+          inStockOnly == other.inStockOnly &&
+          onSaleOnly == other.onSaleOnly;
+
+  @override
+  int get hashCode => Object.hash(
+        searchQuery,
+        selectedCategory,
+        sortOption,
+        minPrice,
+        maxPrice,
+        inStockOnly,
+        onSaleOnly,
+      );
 }

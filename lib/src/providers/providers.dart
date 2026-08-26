@@ -27,11 +27,14 @@ final productRepositoryProvider = Provider<IProductRepository>((ref) {
   return MockProductRepository();
 });
 
+// Alias for repository provider
+final repositoryProvider = productRepositoryProvider;
+
 // Toggle to simulate server error for testing AsyncValue error state
 final simulateErrorProvider = StateProvider<bool>((ref) => false);
 
 // ==========================================
-// 2. Product Providers (FutureProvider & AsyncValue)
+// 2. Product Providers (FutureProvider & Family)
 // ==========================================
 
 final productsFutureProvider = FutureProvider.autoDispose<List<Product>>((ref) async {
@@ -40,9 +43,20 @@ final productsFutureProvider = FutureProvider.autoDispose<List<Product>>((ref) a
   return repository.getProducts(simulateError: simulateError);
 });
 
+// Primary aliases for products provider
+final productsProvider = productsFutureProvider;
+final productListProvider = productsFutureProvider;
+
 final categoriesProvider = FutureProvider.autoDispose<List<String>>((ref) async {
   final repository = ref.watch(productRepositoryProvider);
   return repository.getCategories();
+});
+
+// Product detail provider with .family
+final productDetailProvider =
+    FutureProvider.family.autoDispose<Product?, String>((ref, productId) async {
+  final repository = ref.watch(productRepositoryProvider);
+  return repository.getProductById(productId);
 });
 
 // ==========================================
@@ -56,13 +70,19 @@ class FilterNotifier extends StateNotifier<FilterState> {
     state = state.copyWith(searchQuery: query);
   }
 
+  void search(String query) => setSearchQuery(query);
+
   void setCategory(String category) {
     state = state.copyWith(selectedCategory: category);
   }
 
+  void filterByCategory(String category) => setCategory(category);
+
   void setSortOption(ProductSortOption sortOption) {
     state = state.copyWith(sortOption: sortOption);
   }
+
+  void sortBy(ProductSortOption sortOption) => setSortOption(sortOption);
 
   void setPriceRange(double min, double max) {
     state = state.copyWith(minPrice: min, maxPrice: max);
@@ -79,12 +99,17 @@ class FilterNotifier extends StateNotifier<FilterState> {
   void reset() {
     state = const FilterState();
   }
+
+  void resetFilters() => reset();
 }
 
 final filterNotifierProvider =
     StateNotifierProvider<FilterNotifier, FilterState>((ref) {
   return FilterNotifier();
 });
+
+// Alias for filter provider
+final filterProvider = filterNotifierProvider;
 
 // Derived Provider: Filtered & Sorted Products
 final filteredProductsProvider =
@@ -171,23 +196,49 @@ class FavoritesNotifier extends StateNotifier<Set<String>> {
     state = _storage.loadFavoriteIds();
   }
 
-  Future<void> toggleFavorite(String productId) async {
+  Future<void> toggleFavorite(dynamic productOrId) async {
+    final String id = productOrId is Product ? productOrId.id : productOrId.toString();
     final updated = Set<String>.from(state);
-    if (updated.contains(productId)) {
-      updated.remove(productId);
+    if (updated.contains(id)) {
+      updated.remove(id);
     } else {
-      updated.add(productId);
+      updated.add(id);
     }
     state = updated;
     await _storage.saveFavoriteIds(updated);
   }
 
-  bool isFavorite(String productId) => state.contains(productId);
+  Future<void> addFavorite(dynamic productOrId) async {
+    final String id = productOrId is Product ? productOrId.id : productOrId.toString();
+    if (!state.contains(id)) {
+      final updated = Set<String>.from(state)..add(id);
+      state = updated;
+      await _storage.saveFavoriteIds(updated);
+    }
+  }
+
+  Future<void> removeFavorite(dynamic productOrId) async {
+    final String id = productOrId is Product ? productOrId.id : productOrId.toString();
+    if (state.contains(id)) {
+      final updated = Set<String>.from(state)..remove(id);
+      state = updated;
+      await _storage.saveFavoriteIds(updated);
+    }
+  }
+
+  bool isFavorite(dynamic productOrId) {
+    final String id = productOrId is Product ? productOrId.id : productOrId.toString();
+    return state.contains(id);
+  }
+
+  Set<String> getFavorites() => Set.unmodifiable(state);
 
   Future<void> clearAll() async {
     state = {};
     await _storage.clearFavorites();
   }
+
+  Future<void> clearFavorites() => clearAll();
 }
 
 final favoritesNotifierProvider =
@@ -195,6 +246,9 @@ final favoritesNotifierProvider =
   final storage = ref.watch(favoritesStorageProvider);
   return FavoritesNotifier(storage);
 });
+
+// Aliases for favorites provider
+final favoritesProvider = favoritesNotifierProvider;
 
 // Derived Provider: Full Favorite Products list
 final favoriteProductsProvider =
@@ -205,6 +259,12 @@ final favoriteProductsProvider =
   return asyncProducts.whenData((products) {
     return products.where((p) => favoriteIds.contains(p.id)).toList();
   });
+});
+
+// Family Provider: isFavorite check
+final isFavoriteProvider = Provider.family<bool, String>((ref, productId) {
+  final favorites = ref.watch(favoritesNotifierProvider);
+  return favorites.contains(productId);
 });
 
 // ==========================================
@@ -224,7 +284,7 @@ class CartNotifier extends StateNotifier<List<CartItem>> {
     final size = selectedSize ?? (product.availableSizes.isNotEmpty ? product.availableSizes.first : null);
     final itemId = '${product.id}_${color ?? "default"}_${size ?? "default"}';
 
-    final index = state.indexWhere((item) => item.id == itemId);
+    final index = state.indexWhere((item) => item.id == itemId || item.product.id == product.id && item.selectedColor == color && item.selectedSize == size);
 
     if (index != -1) {
       final existing = state[index];
@@ -244,8 +304,22 @@ class CartNotifier extends StateNotifier<List<CartItem>> {
     }
   }
 
+  void addToCart(Product product, [int quantity = 1]) {
+    addItem(product, quantity: quantity);
+  }
+
   void removeItem(String itemId) {
-    state = state.where((item) => item.id != itemId).toList();
+    state = state.where((item) => item.id != itemId && item.product.id != itemId).toList();
+  }
+
+  void removeFromCart(dynamic itemOrId) {
+    if (itemOrId is CartItem) {
+      removeItem(itemOrId.id);
+    } else if (itemOrId is Product) {
+      removeItem(itemOrId.id);
+    } else {
+      removeItem(itemOrId.toString());
+    }
   }
 
   void updateQuantity(String itemId, int newQuantity) {
@@ -256,19 +330,61 @@ class CartNotifier extends StateNotifier<List<CartItem>> {
 
     state = [
       for (final item in state)
-        if (item.id == itemId) item.copyWith(quantity: newQuantity) else item
+        if (item.id == itemId || item.product.id == itemId)
+          item.copyWith(quantity: newQuantity)
+        else
+          item
     ];
   }
+
+  void increment(String itemId) {
+    final index = state.indexWhere((i) => i.id == itemId || i.product.id == itemId);
+    if (index != -1) {
+      updateQuantity(state[index].id, state[index].quantity + 1);
+    }
+  }
+
+  void incrementQuantity(String itemId) => increment(itemId);
+
+  void decrement(String itemId) {
+    final index = state.indexWhere((i) => i.id == itemId || i.product.id == itemId);
+    if (index != -1) {
+      updateQuantity(state[index].id, state[index].quantity - 1);
+    }
+  }
+
+  void decrementQuantity(String itemId) => decrement(itemId);
 
   void clearCart() {
     state = [];
   }
+
+  void clear() => clearCart();
+
+  bool isInCart(String productId) {
+    return state.any((item) => item.product.id == productId || item.id == productId);
+  }
+
+  int getItemQuantity(String productId) {
+    final item = state.cast<CartItem?>().firstWhere(
+          (i) => i?.product.id == productId || i?.id == productId,
+          orElse: () => null,
+        );
+    return item?.quantity ?? 0;
+  }
+
+  double get subtotal => state.fold(0.0, (sum, item) => sum + item.totalPrice);
+  int get totalItemsCount => state.fold(0, (sum, item) => sum + item.quantity);
+  double get totalPrice => subtotal;
 }
 
 final cartNotifierProvider =
     StateNotifierProvider<CartNotifier, List<CartItem>>((ref) {
   return CartNotifier();
 });
+
+// Aliases for cart provider
+final cartProvider = cartNotifierProvider;
 
 // Derived Provider: Cart Summary Calculations
 class CartSummary {
@@ -289,6 +405,10 @@ class CartSummary {
     required this.total,
     this.promoCode,
   });
+
+  // Alias
+  int get itemCount => totalItemCount;
+  double get totalAmount => total;
 }
 
 final promoCodeProvider = StateProvider<String?>((ref) => null);
@@ -327,6 +447,9 @@ final cartSummaryProvider = Provider<CartSummary>((ref) {
     promoCode: promoCode,
   );
 });
+
+// Alias for cart total
+final cartTotalProvider = cartSummaryProvider;
 
 // ==========================================
 // 6. Theme Mode StateNotifierProvider

@@ -1,0 +1,153 @@
+[
+  {
+    "id": "prod_1",
+    "title": "Casque Audio ANC Pro Wireless",
+    "name": "Casque Audio ANC Pro Wireless",
+    "description": "Casque circum-aural haute-fidélité doté d’une réduction active du bruit de pointe, d’une autonomie de 40 heures et de coussinets à mémoire de forme ultra-confortables pour des sessions d’écoute immersives prolongées.",
+    "price": 199.99,
+    "originalPrice": 249.99,
+    "rating": 4.8,
+    "reviewCount": 342,
+    "category": "Électronique",
+    "imageUrl": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80",
+    "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80",
+    "galleryImages": [
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=800&auto=format&fit=crop&q=80"
+    ],
+    "inStock": true,
+    "stockCount": 18,
+    "availableColors": ["Noir Mat", "Argent Sidéral", "Bleu Nuit"],
+    "availableSizes": ["Standard"],
+    "specifications": {
+      "Autonomie": "40 heures avec ANC",
+      "Connectivité": "Bluetooth 5.3 + Jack 3.5mm",
+      "Poids": "250 g",
+      "Garantie": "2 ans constructeur"
+    },
+    "isFeatured": true
+  },
+  {
+    "id": "prod_2",
+    "title": "Montre Connectée Sport Ultra",
+    "name": "Montre Connectée Sport Ultra",
+    "description": "Montre intelligente avec boîtier en titane aérospatial, GPS double fréquence, écran AMOLED Always-On lumineux de 2000 nits, suivi cardiaque continu et étanchéité 100m.",
+    "price": 349.0,
+    "originalPrice": 399.0,
+    "rating": 4.9,
+    "reviewCount": 512,
+    "category": "Électronique",
+    "imageUrl": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80",
+    "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80",
+    "galleryImages": [
+      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80"
+    ],
+    "inStock": true,
+    "stockCount": 9,
+    "availableColors": ["Titane Naturel", "Noir Carbone", "Orange Sport"],
+    "availableSizes": ["45mm", "49mm"],
+    "specifications": {
+      "Écran": "AMOLED 1.9 pouces Sapphire",
+      "Étanchéité": "10 ATM (100 mètres)",
+      "Autonomie": "Jusqu’à 7 jours"
+    },
+    "isFeatured": true
+  },
+  {
+    "id": "prod_3",
+    "title": "Sneakers Velocity Runner Pro",
+    "name": "Sneakers Velocity Runner Pro",
+    "description": "Chaussures de running haute performance intégrant une plaque de carbone réactive et une mousse amortissante ultra-légère pour maximiser le retour d’énergie à chaque foulée.",
+    "price": 139.99,
+    "originalPrice": 179.99,
+    "rating": 4.7,
+    "reviewCount": 189,
+    "category": "Chaussures",
+    "imageUrl": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=80",
+    "image": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=80",
+    "galleryImages": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&auto=format&fit=crop&q=80"
+    ],
+    "inStock": true,
+    "stockCount": 24,
+    "availableColors": ["Rouge Écarlate", "Noir Furtif", "Blanc Polaire"],
+    "availableSizes": ["40", "41", "42", "43", "44", "45"],
+    "specifications": {
+      "Poids": "210g",
+      "Drop": "8 mm"
+    },
+    "isFeatured": true
+  },
+  {
+    "id": "prod_4",
+    "title": "Sac à Dos Voyageur Urbain 25L",
+    "name": "Sac à Dos Voyageur Urbain 25L",
+    "description": "Sac à dos déperlant avec compartiment renforcé pour ordinateur portable jusqu’à 16 pouces, poches antivol dissimulées, port de recharge USB intégré et dos matelassé ergonomique.",
+    "price": 79.5,
+    "originalPrice": 99.0,
+    "rating": 4.6,
+    "reviewCount": 95,
+    "category": "Accessoires",
+    "imageUrl": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&auto=format&fit=crop&q=80",
+    "image": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&auto=format&fit=crop&q=80",
+    "galleryImages": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&auto=format&fit=crop&q=80"
+    ],
+    "inStock": true,
+    "stockCount": 15,
+    "availableColors": ["Gris Anthracite", "Vert Forêt", "Noir Onyx"],
+    "availableSizes": ["25 Litres"],
+    "specifications": {
+      "Capacité": "25 Litres"
+    },
+    "isFeatured": false
+  },
+  {
+    "id": "prod_5",
+    "title": "Veste Coupe-Vent Technique Gore-Tex",
+    "name": "Veste Coupe-Vent Technique Gore-Tex",
+    "description": "Veste tout-temps ultralégère, imperméable et coupe-vent 3 couches. Conçue pour résister aux intempéries tout en garantissant une respirabilité optimale.",
+    "price": 219.0,
+    "originalPrice": null,
+    "rating": 4.9,
+    "reviewCount": 78,
+    "category": "Mode",
+    "imageUrl": "https://images.unsplash.com/photo-1544441893-675973e31985?w=800&auto=format&fit=crop&q=80",
+    "image": "https://images.unsplash.com/photo-1544441893-675973e31985?w=800&auto=format&fit=crop&q=80",
+    "galleryImages": [
+      "https://images.unsplash.com/photo-1544441893-675973e31985?w=800&auto=format&fit=crop&q=80"
+    ],
+    "inStock": true,
+    "stockCount": 8,
+    "availableColors": ["Jaune Moutarde", "Kaki", "Noir Profond"],
+    "availableSizes": ["S", "M", "L", "XL"],
+    "specifications": {
+      "Membrane": "Gore-Tex Pro 3 couches"
+    },
+    "isFeatured": false
+  },
+  {
+    "id": "prod_6",
+    "title": "Enceinte Bluetooth Nomade 360°",
+    "name": "Enceinte Bluetooth Nomade 360°",
+    "description": "Son immersif à 360 degrés avec basses profondes, certification IP67 étanche à l’eau et à la poussière, autonomie de 24h et mode jumelage stéréo sans fil.",
+    "price": 89.9,
+    "originalPrice": 119.9,
+    "rating": 4.5,
+    "reviewCount": 220,
+    "category": "Électronique",
+    "imageUrl": "https://images.unsplash.com/photo-1545454675-3531b543be5d?w=800&auto=format&fit=crop&q=80",
+    "image": "https://images.unsplash.com/photo-1545454675-3531b543be5d?w=800&auto=format&fit=crop&q=80",
+    "galleryImages": [
+      "https://images.unsplash.com/photo-1545454675-3531b543be5d?w=800&auto=format&fit=crop&q=80"
+    ],
+    "inStock": true,
+    "stockCount": 30,
+    "availableColors": ["Bleu Océan", "Corail", "Gris Galet"],
+    "availableSizes": ["Standard"],
+    "specifications": {
+      "Puissance": "30W RMS"
+    },
+    "isFeatured": true
+  }
+]
